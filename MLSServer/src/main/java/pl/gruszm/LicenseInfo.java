@@ -1,15 +1,13 @@
 package pl.gruszm;
 
+import java.util.Date;
+
 public class LicenseInfo
 {
     private String LicenceUserName;
     private int ValidationTime;
-
-    public LicenseInfo(String licenceUserName, int validationTime)
-    {
-        LicenceUserName = licenceUserName;
-        ValidationTime = validationTime;
-    }
+    private Date expiryTime;
+    private boolean isUsed;
 
     public String getLicenceUserName()
     {
@@ -29,5 +27,25 @@ public class LicenseInfo
     public void setValidationTime(int validationTime)
     {
         ValidationTime = validationTime;
+    }
+
+    public Date getExpiryTime()
+    {
+        return expiryTime;
+    }
+
+    public void setExpiryTime(Date expiryTime)
+    {
+        this.expiryTime = expiryTime;
+    }
+
+    public boolean isUsed()
+    {
+        return isUsed;
+    }
+
+    public void setUsed(boolean used)
+    {
+        isUsed = used;
     }
 }

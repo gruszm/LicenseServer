@@ -11,8 +11,12 @@ import java.io.Reader;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
+import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class LicenseServer implements Runnable
 {
@@ -20,6 +24,7 @@ public class LicenseServer implements Runnable
     private Map<String, LicenseInfo> licenses;
     private Gson gson;
     private ServerSocket serverSocket;
+    private ScheduledExecutorService licenseExpiryService;
 
     public LicenseServer(int port)
     {
@@ -27,6 +32,24 @@ public class LicenseServer implements Runnable
         licenses = new ConcurrentHashMap<>();
         gson = new Gson();
         loadLicenses();
+        licenseExpiryService = Executors.newScheduledThreadPool(1);
+        scheduleLicenseExpiryCheck();
+    }
+
+    private void scheduleLicenseExpiryCheck()
+    {
+        licenseExpiryService.scheduleAtFixedRate(() ->
+        {
+            Date now = new Date();
+
+            licenses.values().forEach(license ->
+            {
+                if (license.getExpiryTime() != null && now.after(license.getExpiryTime()) && license.isUsed())
+                {
+                    license.setUsed(false);
+                }
+            });
+        }, 0, 10, TimeUnit.SECONDS);
     }
 
     @Override
