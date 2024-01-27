@@ -1,5 +1,6 @@
 package pl.gruszm;
 
+import java.util.Date;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
@@ -35,7 +36,7 @@ public class Main
         serverThread.start();
 
         System.out.println("NOTE: Type break to stop the server");
-        System.out.println("NOTE: or print to show all licenses");
+        System.out.println("NOTE: or print to show all licenses currently in use");
 
         while (true)
         {
@@ -49,9 +50,15 @@ public class Main
             {
                 server.getLicenses().values().forEach(client ->
                 {
-                    System.out.println("NUL: " + client.getLicenceUserName());
-                    System.out.println("CW: " + client.getValidationTime() + " seconds");
-                    System.out.println();
+                    if (client.isUsed())
+                    {
+                        Date now = new Date();
+                        long timeToExpire = (client.getExpiryTime().getTime() - now.getTime()) / 1000;
+
+                        System.out.println("NUL: " + client.getLicenceUserName());
+                        System.out.println("Time to expire: " + timeToExpire + " seconds");
+                        System.out.println();
+                    }
                 });
             }
         }
