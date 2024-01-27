@@ -34,9 +34,29 @@ public class Main
         Thread serverThread = new Thread(server);
         serverThread.start();
 
-        System.out.println("NOTE: Type anything to stop the server");
-        in.nextLine();
+        System.out.println("NOTE: Type break to stop the server");
+        System.out.println("NOTE: or print to show all licenses");
+
+        while (true)
+        {
+            String s = in.nextLine();
+
+            if (s.equals("break"))
+            {
+                break;
+            }
+            else if (s.equals("print"))
+            {
+                server.getLicenses().values().forEach(client ->
+                {
+                    System.out.println("NUL: " + client.getLicenceUserName());
+                    System.out.println("CW: " + client.getValidationTime() + " seconds");
+                    System.out.println();
+                });
+            }
+        }
 
         server.stopServer();
+        in.close();
     }
 }

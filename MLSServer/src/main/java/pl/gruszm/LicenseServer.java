@@ -110,4 +110,9 @@ public class LicenseServer implements Runnable
             throw new RuntimeException(e);
         }
     }
+
+    public Map<String, LicenseInfo> getLicenses()
+    {
+        return licenses;
+    }
 }
