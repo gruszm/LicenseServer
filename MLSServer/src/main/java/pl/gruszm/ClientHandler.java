@@ -27,13 +27,13 @@ public class ClientHandler extends Thread
     @Override
     public void run()
     {
-        try (InputStream input = socket.getInputStream();
-             OutputStream output = socket.getOutputStream();
-             BufferedReader reader = new BufferedReader(new InputStreamReader(input));
-             PrintWriter writer = new PrintWriter(output, true))
+        try (PrintWriter writer = new PrintWriter(socket.getOutputStream(), true);
+             BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream())))
         {
             String line = reader.readLine();
             Request request = gson.fromJson(line, Request.class);
+
+            System.out.println("Received a request from: " + request.getLicenceUserName());
 
             Response response = handleRequest(request);
             writer.println(gson.toJson(response));

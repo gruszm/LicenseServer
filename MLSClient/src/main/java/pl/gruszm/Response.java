@@ -64,7 +64,7 @@ public class Response
     public long getExpiryTime()
     {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-        sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+
         try
         {
             Date expiryDate = sdf.parse(Expired);

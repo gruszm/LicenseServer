@@ -45,7 +45,36 @@ public class LicenseClientAPI
         return currentToken;
     }
 
-    private void requestLicenceToken()
+    private synchronized void updateToken(Response newToken)
+    {
+        if (newToken != null && newToken.isLicenseValid())
+        {
+            currentToken = newToken;
+            scheduleTokenRenewal(newToken.getExpiryTime());
+        }
+        else
+        {
+            currentToken = newToken;
+        }
+
+        System.out.println("Token updated, valid until: " + currentToken.getExpired());
+    }
+
+    private synchronized void scheduleTokenRenewal(long expiryTime)
+    {
+        tokenRenewalTimer.cancel();
+        tokenRenewalTimer = new Timer();
+        tokenRenewalTimer.schedule(new TimerTask()
+        {
+            @Override
+            public void run()
+            {
+                requestLicenceToken();
+            }
+        }, expiryTime - System.currentTimeMillis());
+    }
+
+    private synchronized void requestLicenceToken()
     {
         new Thread(() ->
         {
@@ -53,7 +82,6 @@ public class LicenseClientAPI
                  PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
                  BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream())))
             {
-
                 Request request = new Request(licenceUserName, licenceKey);
                 out.println(gson.toJson(request));
 
@@ -66,33 +94,6 @@ public class LicenseClientAPI
                 currentToken = new Response(licenceUserName, false, "Connection error", null);
             }
         }).start();
-    }
-
-    private void updateToken(Response newToken)
-    {
-        if (newToken != null && newToken.isLicenseValid())
-        {
-            currentToken = newToken;
-            scheduleTokenRenewal(newToken.getExpiryTime());
-        }
-        else
-        {
-            currentToken = newToken;
-        }
-    }
-
-    private void scheduleTokenRenewal(long expiryTime)
-    {
-        tokenRenewalTimer.cancel();
-        tokenRenewalTimer = new Timer();
-        tokenRenewalTimer.schedule(new TimerTask()
-        {
-            @Override
-            public void run()
-            {
-                requestLicenceToken();
-            }
-        }, expiryTime - System.currentTimeMillis());
     }
 
     public void stop()

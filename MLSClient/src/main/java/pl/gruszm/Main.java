@@ -3,6 +3,7 @@ package pl.gruszm;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Scanner;
 
 public class Main
 {
@@ -13,34 +14,16 @@ public class Main
         clientAPI.start("127.0.0.1", 2222);
         clientAPI.setLicence("Radek", generateKey("Radek"));
 
-        Response response = clientAPI.getLicenceToken();
-        if (response != null)
-        {
-            if (response.isLicenseValid())
-            {
-                System.out.println("Otrzymano token licencji. Ważny do: " + response.getExpired());
-            }
-            else
-            {
-                System.out.println("Nie udało się uzyskać tokenu licencji. Powód: " + response.getDescription());
-            }
-        }
-        else
-        {
-            System.out.println("Nie otrzymano odpowiedzi od serwera.");
-        }
+        clientAPI.getLicenceToken();
 
-        try
-        {
-            Thread.sleep(10000);
-        }
-        catch (InterruptedException e)
-        {
-            e.printStackTrace();
-        }
+        Scanner in = new Scanner(System.in);
+
+        in.nextLine();
+
+        in.close();
 
         clientAPI.stop();
-        System.out.println("Klient został zatrzymany.");
+        System.out.println("Client stopped");
     }
 
     public static String generateKey(String username)
