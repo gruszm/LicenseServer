@@ -50,14 +50,14 @@ public class LicenseClientAPI
         if (newToken != null && newToken.isLicenseValid())
         {
             currentToken = newToken;
+            System.out.println("Token updated, valid until: " + currentToken.getExpired());
             scheduleTokenRenewal(newToken.getExpiryTime());
         }
         else
         {
             currentToken = newToken;
+            System.out.println("Token not updated, reason: " + currentToken.getDescription());
         }
-
-        System.out.println("Token updated, valid until: " + currentToken.getExpired());
     }
 
     private synchronized void scheduleTokenRenewal(long expiryTime)
