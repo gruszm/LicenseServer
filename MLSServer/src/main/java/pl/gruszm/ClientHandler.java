@@ -60,9 +60,18 @@ public class ClientHandler extends Thread
             return new Response(request.getLicenceUserName(), false, "Invalid license key", null);
         }
 
-        Date expiryDate = calculateExpiryDate(licenseInfo.getValidationTime());
+        if (!licenseInfo.isUsed() || (licenseInfo.getExpiryTime() != null && new Date().after(licenseInfo.getExpiryTime())))
+        {
+            licenseInfo.setUsed(true);
+            Date expiryDate = calculateExpiryDate(licenseInfo.getValidationTime());
+            licenseInfo.setExpiryTime(expiryDate);
 
-        return new Response(request.getLicenceUserName(), true, null, expiryDate);
+            return new Response(request.getLicenceUserName(), true, null, expiryDate);
+        }
+        else
+        {
+            return new Response(request.getLicenceUserName(), false, "Licence is already in use", null);
+        }
     }
 
     public static String generateKey(String username)

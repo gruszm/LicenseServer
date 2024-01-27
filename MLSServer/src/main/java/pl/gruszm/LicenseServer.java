@@ -99,6 +99,8 @@ public class LicenseServer implements Runnable
 
     public void stopServer()
     {
+        licenseExpiryService.shutdown();
+
         try
         {
             serverSocket.close();
