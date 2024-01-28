@@ -38,7 +38,11 @@ public class ClientHandler extends Thread
             System.out.println("Received a request from: " + request.getLicenceUserName());
 
             Response response = handleRequest(request);
-            writer.println(gson.toJson(response));
+
+            if (response != null)
+            {
+                writer.println(gson.toJson(response));
+            }
         }
         catch (Exception e)
         {
@@ -53,6 +57,12 @@ public class ClientHandler extends Thread
         if (licenseInfo == null)
         {
             return new Response(request.getLicenceUserName(), false, "No license found for user", null);
+        }
+
+        if (request.getLicenceKey().equals("STOP") && licenseInfo != null)
+        {
+            licenseInfo.setUsed(false);
+            return null;
         }
 
         String generatedKey = generateKey(request.getLicenceUserName());

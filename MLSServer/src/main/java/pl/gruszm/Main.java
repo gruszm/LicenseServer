@@ -46,6 +46,10 @@ public class Main
             {
                 break;
             }
+            else if (s.equals("port"))
+            {
+                System.out.println("Port: " + port);
+            }
             else if (s.equals("print"))
             {
                 server.getLicenses().values().forEach(client ->

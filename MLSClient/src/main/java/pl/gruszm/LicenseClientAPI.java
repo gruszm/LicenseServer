@@ -2,7 +2,9 @@ package pl.gruszm;
 
 import com.google.gson.Gson;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -99,6 +101,18 @@ public class LicenseClientAPI
     public void stop()
     {
         tokenRenewalTimer.cancel();
+
+        try (Socket socket = new Socket(serverAddress, serverPort);
+             PrintWriter out = new PrintWriter(socket.getOutputStream(), true))
+        {
+            Request leaveRequest = new Request(licenceUserName, "STOP");
+            out.println(gson.toJson(leaveRequest));
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
         currentToken = null;
         licenceUserName = null;
         licenceKey = null;

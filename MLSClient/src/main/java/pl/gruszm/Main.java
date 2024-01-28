@@ -3,6 +3,7 @@ package pl.gruszm;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.sql.SQLOutput;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
@@ -44,7 +45,27 @@ public class Main
 
         clientAPI.getLicenceToken();
 
-        in.nextLine();
+        while (true)
+        {
+            String command = in.nextLine();
+
+            if (command.equals("gettoken"))
+            {
+                try
+                {
+                    Response r = clientAPI.getLicenceToken();
+                    System.out.println("Valid: " + r.isValid());
+                }
+                catch (NullPointerException e)
+                {
+                    System.out.println("Token invalid.");
+                }
+            }
+            else if (command.equals("stop"))
+            {
+                break;
+            }
+        }
 
         in.close();
 
