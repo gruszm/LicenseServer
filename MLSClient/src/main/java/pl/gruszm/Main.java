@@ -12,7 +12,7 @@ public class Main
         LicenseClientAPI clientAPI = new LicenseClientAPI();
 
         clientAPI.start("127.0.0.1", 2222);
-        clientAPI.setLicence("Radek", generateKey("Radek"));
+        clientAPI.setLicence("Admin", generateKey("Admin"));
 
         clientAPI.getLicenceToken();
 

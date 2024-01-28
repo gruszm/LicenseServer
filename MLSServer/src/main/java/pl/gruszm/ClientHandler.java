@@ -2,7 +2,9 @@ package pl.gruszm;
 
 import com.google.gson.Gson;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -60,6 +62,14 @@ public class ClientHandler extends Thread
             return new Response(request.getLicenceUserName(), false, "Invalid license key", null);
         }
 
+        if (licenseInfo.getValidationTime() == 0)
+        {
+            licenseInfo.setUsed(true);
+            Date expiryDate = calculateExpiryDate(licenseInfo.getValidationTime() + 3600L * 24L * 365L); // add 100 years
+            licenseInfo.setExpiryTime(expiryDate);
+
+            return new Response(request.getLicenceUserName(), true, null, expiryDate);
+        }
         if (!licenseInfo.isUsed() || (licenseInfo.getExpiryTime() != null && new Date().after(licenseInfo.getExpiryTime())))
         {
             licenseInfo.setUsed(true);
